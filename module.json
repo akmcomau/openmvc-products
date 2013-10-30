@@ -1,0 +1,12 @@
+{
+	"name": "Products",
+	"description": "Support for products",
+	"namespace": "\\modules\\products",
+	"config_controller": "administrator\\Products",
+	"controllers": [
+		"Products",
+		"administrator\\Products"
+	],
+	"default_config": {
+	}
+}
