@@ -35,7 +35,6 @@ class ProductAttributeOption extends Model {
 	];
 
 	protected $indexes = [
-		'site_id',
 		'product_attribute_id',
 	];
 

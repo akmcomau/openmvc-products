@@ -6,6 +6,8 @@ use core\classes\models\Category;
 
 class ProductCategory extends Category {
 
+	protected $link_type = 'link-table';
+
 	protected $table       = 'product_category';
 	protected $primary_key = 'product_category_id';
 	protected $columns     = [

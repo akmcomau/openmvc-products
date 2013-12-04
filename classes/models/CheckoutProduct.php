@@ -4,12 +4,12 @@ namespace modules\products\classes\models;
 
 use core\classes\Model;
 
-class ProductImage extends Model {
+class CheckoutProduct extends Model {
 
-	protected $table       = 'product_image';
-	protected $primary_key = 'product_image_id';
+	protected $table       = 'checkout_product';
+	protected $primary_key = 'checkout_product_id';
 	protected $columns     = [
-		'product_image_id' => [
+		'checkout_product_id' => [
 			'data_type'      => 'int',
 			'auto_increment' => TRUE,
 			'null_allowed'   => FALSE,
@@ -18,26 +18,23 @@ class ProductImage extends Model {
 			'data_type'      => 'int',
 			'null_allowed'   => FALSE,
 		],
-		'product_image_name' => [
-			'data_type'      => 'text',
-			'data_length'    => '256',
-			'null_allowed'   => FALSE,
-		],
-		'product_image_filename' => [
-			'data_type'      => 'text',
-			'data_length'    => '256',
-			'null_allowed'   => FALSE,
-		],
-		'product_width' => [
+		'checkout_product_quantity' => [
 			'data_type'      => 'int',
 			'null_allowed'   => FALSE,
 		],
-		'product_height' => [
-			'data_type'      => 'int',
+		'checkout_product_cost' => [
+			'data_type'      => 'numeric',
+			'data_length'    => [6, 4],
 			'null_allowed'   => FALSE,
 		],
-		'product_ordering' => [
-			'data_type'      => 'int',
+		'checkout_product_sell' => [
+			'data_type'      => 'numeric',
+			'data_length'    => [6, 4],
+			'null_allowed'   => FALSE,
+		],
+		'checkout_product_tax' => [
+			'data_type'      => 'numeric',
+			'data_length'    => [6, 4],
 			'null_allowed'   => FALSE,
 		],
 	];

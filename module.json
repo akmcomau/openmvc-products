@@ -5,7 +5,8 @@
 	"config_controller": "administrator\\Products",
 	"controllers": [
 		"Products",
-		"administrator\\Products"
+		"administrator\\Products",
+		"administrator\\ProductCategoryManager"
 	],
 	"default_config": {
 	}

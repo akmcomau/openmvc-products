@@ -1,10 +1,13 @@
 <?php
 
-namespace core\classes\models;
+namespace modules\products\classes\models;
 
 use core\classes\models\Category;
 
 class ProductBrand extends Category {
+
+	protected $link_type = 'foreign-key';
+	protected $link_from = 'product';
 
 	protected $table       = 'product_brand';
 	protected $primary_key = 'product_brand_id';
