@@ -1,0 +1,16 @@
+.product-cell {
+	height: 250px;
+	text-align: center;
+}
+.product-cell h4 {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.product-cell a.product {
+	height: 160px;
+	line-height: 160px;
+}
+.product-cell .price {
+	color: darkred;
+	font-size: 1.2em;
+}

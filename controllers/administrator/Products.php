@@ -122,6 +122,7 @@ class Products extends Controller {
 	}
 
 	protected function updateProductFromRequest(FormValidator $form, $product) {
+		// basic info
 		$product->sku = $form->getValue('sku');
 		$product->model = $form->getValue('model');
 		$product->name = $form->getValue('name');
@@ -131,6 +132,25 @@ class Products extends Controller {
 		$product->cost = empty($form->getValue('cost')) ? NULL : $form->getValue('cost');
 		$product->sell = $form->getValue('sell');
 		$product->brand_id = ((int)$form->getValue('brand')) ? (int)$form->getValue('brand') : NULL;
+
+		// image uploads
+		$ordering = $product->getNumImages();
+		for ($i=0; $i<$this->request->requestParam('num_images'); $i++) {
+			if ($this->request->fileParam('image')['error'][$i] == 0) {
+				$image = $product->getModel('\modules\products\classes\models\ProductImage');
+				$image->setTmpName($this->request->fileParam('image')['tmp_name'][$i]);
+				$image->setOriginalFilename($this->request->fileParam('image')['name'][$i]);
+				$image->ordering   = ++$ordering;
+				$image->product_id = $product->id;
+				$product->addImage($image);
+			}
+		}
+
+		// deleted images
+		$delete_images = $this->request->requestParam('delete_images');
+		for ($i=0; $i<count($delete_images); $i++) {
+			$product->removeImage($delete_images[$i]);
+		}
 
 		$product->setCategory(NULL);
 		if ((int)$form->getValue('category')) {
@@ -154,6 +174,7 @@ class Products extends Controller {
 		if ($form->validate()) {
 			$this->updateProductFromRequest($form, $product);
 			$product->insert();
+			$product->updateImages();
 			throw new RedirectException($this->url->getUrl('administrator/Products', 'index', ['add-success']));
 		}
 		elseif ($form->isSubmitted()) {
@@ -190,6 +211,7 @@ class Products extends Controller {
 		if ($form->validate()) {
 			$this->updateProductFromRequest($form, $product);
 			$product->update();
+			$product->updateImages();
 			throw new RedirectException($this->url->getUrl('administrator/Products', 'index', ['update-success']));
 		}
 		elseif ($form->isSubmitted()) {

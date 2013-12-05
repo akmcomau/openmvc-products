@@ -5,6 +5,8 @@ namespace modules\products\classes\models;
 use core\classes\Model;
 
 class Product extends Model {
+	protected $images = NULL;
+	protected $removed_images = [];
 
 	protected $table       = 'product';
 	protected $primary_key = 'product_id';
@@ -113,5 +115,63 @@ class Product extends Model {
 			}
 		}
 		return $this->objects['category'];
+	}
+
+	public function getImages() {
+		if (is_null($this->images)) {
+			$image = $this->getModel('\modules\products\classes\models\ProductImage');
+			$this->images = $image->getMulti(['product_id' => $this->id], ['ordering' => 'asc']);
+		}
+
+		return $this->images;
+	}
+
+	public function addImage(ProductImage $image) {
+		if (is_null($this->images)) {
+			$this->getImages();
+		}
+
+		$this->images[] = $image;
+	}
+
+	public function removeImage($image_id) {
+		if (is_null($this->images)) {
+			$this->getImages();
+		}
+
+		$new_images = [];
+		foreach ($this->images as $index => $image) {
+			if ($image_id == $image->id) {
+				$this->removed_images[] = $image;
+			}
+			else {
+				$new_images[] = $image;
+			}
+		}
+
+		$this->images = $new_images;
+	}
+
+	public function getNumImages() {
+		return count($this->getImages());
+	}
+
+	public function updateImages() {
+		// remove the images
+		foreach ($this->removed_images as $image) {
+			$image->delete();
+		}
+
+		// insert uploaded images
+		foreach ($this->images as $image) {
+			if ($image->getTmpName()) {
+				$image->product_id = $this->id;
+				$image->upload();
+			}
+		}
+	}
+
+	public function getUrl($url) {
+		return $url->getUrl('Product', 'view', [$this->id, $this->name]);
 	}
 }

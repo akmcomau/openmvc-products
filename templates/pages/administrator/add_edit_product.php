@@ -1,7 +1,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
-			<form class="admin-form" method="post" id="form-product">
+			<form class="admin-form" method="post" id="form-product" enctype="multipart/form-data">
 				<div class="widget">
 					<div class="widget-header">
 						<h3><?php
@@ -106,6 +106,38 @@
 							</div>
 						</div>
 						<hr class="separator-2column" />
+						<div class="row">
+							<div class="col-md-3 col-sm-3 title-2column"><?php echo $text_images; ?></div>
+							<div class="col-md-9 col-sm-9 ">
+								<strong><?php echo $text_upload_images; ?></strong>
+								<select name="num_images" id="num_images" class="form-control" onchange="update_uploads();">
+									<?php for($i=1; $i<=10; $i++) {
+										echo "<option value=\"$i\">$i</option>";
+									} ?>
+								</select>
+								<br />
+								<div id="image_uploads"></div>
+								<br />
+								<strong><?php echo $text_current_images; ?></strong>
+								<div id="current_images" class="row">
+									<?php foreach ($product->getImages() as $image) {
+										if ($image->id) {
+											?>
+											<div class="col-md-4 col-sm-6 align-center">
+												<img src="<?php echo $image->getThumbnailUrl(); ?>" />
+												<br />
+												<label>
+													<input type="checkbox" name="delete_images[]" value="<?php echo $image->id; ?>" />
+													<?php echo $text_delete; ?>
+												</label>
+											</div>
+											<?php
+										}
+									} ?>
+								</div>
+							</div>
+						</div>
+						<hr class="separator-2column" />
 
 						<div class="col-md-12 align-center">
 							<button class="btn btn-primary" type="submit" name="form-product-submit"><?php
@@ -121,4 +153,27 @@
 </div>
 <script type="text/javascript">
 	<?php echo $form->getJavascriptValidation(); ?>
+
+	function update_uploads() {
+		var num_images = $('#num_images').val();
+
+		var images = [];
+		$('#image_uploads').find('input').each(function() {
+			images[images.length] = $(this);
+		});
+
+		$('#image_uploads').html('');
+		for (var i=0; i<num_images; i++) {
+			var input = $('<input type="file" />');
+			if (typeof(images[i]) != 'undefined') {
+				input = images[i];
+			}
+			else {
+				input.attr('name', 'image[]');
+			}
+			$('#image_uploads').append(input);
+			$('#image_uploads').append($('<br />'));
+		}
+	}
+	update_uploads();
 </script>

@@ -26,6 +26,10 @@ $_LANGUAGE = [
 	'sell_price' => 'Sell Price',
 	'featured' => 'Featured',
 	'description' => 'Description',
+	'images' => 'Images',
+	'delete' => 'Delete',
+	'upload_images' => 'No. images to upload',
+	'current_images' => 'Current Images',
 
 	'error_product_name' => 'Cannot be empty or longer 128 characters',
 	'error_product_sku' => 'Cannot be empty or longer 64 characters',
