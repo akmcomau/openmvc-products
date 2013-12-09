@@ -128,6 +128,13 @@ class Installer {
 			],
 		]);
 		$main_menu->update();
+
+		$config = $this->config->getSiteConfig();
+		$config['sites'][$this->config->getSiteDomain()]['checkout']['item_types']['product'] = [
+			'checkout' => '\modules\products\classes\models\CheckoutProduct',
+			'item' => '\modules\products\classes\models\Product',
+		];
+		$this->config->setSiteConfig($config);
 	}
 
 	public function disable() {

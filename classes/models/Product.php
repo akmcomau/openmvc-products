@@ -3,8 +3,15 @@
 namespace modules\products\classes\models;
 
 use core\classes\Model;
+use modules\checkout\classes\models\ItemInterface;
+use modules\checkout\classes\models\Checkout;
+use modules\checkout\classes\models\CheckoutItem;
 
-class Product extends Model {
+class Product extends Model implements ItemInterface {
+
+	protected $quantity = 0;
+	protected $total = 0;
+
 	protected $images = NULL;
 	protected $removed_images = [];
 
@@ -171,7 +178,64 @@ class Product extends Model {
 		}
 	}
 
+	public function purchase(Checkout $checkout, CheckoutItem $checkout_item, ItemInterface $item) {
+		$checkout_prod = $this->getModel('\modules\products\classes\models\CheckoutProduct');
+		$checkout_prod->checkout_item_id = $checkout_item->id;
+		$checkout_prod->product_id = $item->id;
+		$checkout_prod->insert();
+	}
+
 	public function getUrl($url) {
 		return $url->getUrl('Product', 'view', [$this->id, $this->name]);
+	}
+
+	public function allowMultiple() {
+		return TRUE;
+	}
+
+
+	public function getMaxQuantity() {
+		return 1000000;
+	}
+
+	public function getName() {
+		return $this->name;
+	}
+
+	public function getPrice() {
+		return $this->sell;
+	}
+
+	public function getCostPrice() {
+		return $this->cost;
+	}
+
+	public function getSKU() {
+		return $this->sku;
+	}
+
+	public function setQuantity($quantity) {
+		$this->quantity = (int)$quantity;
+		$this->total    = $this->sell * $this->quantity;
+	}
+
+	public function getQuantity() {
+		return $this->quantity;
+	}
+
+	public function setTotal($total) {
+		$this->total = (int)$total;
+	}
+
+	public function getTotal() {
+		return $this->total;
+	}
+
+	public function getType() {
+		return 'product';
+	}
+
+	public function isShippable() {
+		return TRUE;
 	}
 }
