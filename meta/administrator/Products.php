@@ -1,6 +1,6 @@
 <?php $_URLS = [
 	'aliases' => [
-		'en' => 'products',
+		'en' => 'admin/products',
 	],
 	'methods' => [
 		'index' => [
@@ -8,9 +8,11 @@
 		],
 		'addProduct' => [
 			'link_text' => [ 'en' => 'New Product' ],
+			'aliases' => ['en' => 'new-product'],
 		],
 		'editProduct' => [
 			'link_text' => [ 'en' => 'Edit Product' ],
+			'aliases' => ['en' => 'edit-product'],
 		],
 		'attributes' => [
 			'link_text' => [ 'en' => 'Attributes' ],

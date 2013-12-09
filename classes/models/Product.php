@@ -89,6 +89,17 @@ class Product extends Model implements ItemInterface {
 		'product_brand_id'  => ['product_brand', 'product_brand_id'],
 	];
 
+	public function getBrand() {
+		$this->getModel('\modules\products\classes\models\ProductBrand')->get([
+			'id' => $this->brand_id
+		]);
+	}
+
+	public function getBrandName() {
+		$brand = $this->getBrand();
+		return $brand ? $brand->name : NULL;
+	}
+
 	public function setCategory(ProductCategory $category = NULL) {
 		$this->objects['category'] = $category;
 	}
@@ -186,7 +197,7 @@ class Product extends Model implements ItemInterface {
 	}
 
 	public function getUrl($url) {
-		return $url->getUrl('Product', 'view', [$this->id, $this->name]);
+		return $url->getUrl('Products', 'view', [$this->id, $this->name]);
 	}
 
 	public function allowMultiple() {

@@ -14,3 +14,21 @@
 	color: darkred;
 	font-size: 1.2em;
 }
+.view-product .image {
+	text-align: center;
+}
+.view-product .image img {
+	width: 100%;
+	max-width: 400px;
+}
+.view-product .button {
+	text-align: center;
+}
+.view-product .price {
+	text-align: center;
+	color: darkred;
+	font-size: 2em;
+}
+.view-product .details .table th {
+	width: 25%;
+}
