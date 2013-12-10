@@ -3,8 +3,10 @@
 namespace modules\products\classes\models;
 
 use core\classes\models\Category;
+use core\classes\traits\Thumbnails;
 
 class ProductCategory extends Category {
+	use Thumbnails;
 
 	protected $link_type = 'link-table';
 
@@ -29,6 +31,11 @@ class ProductCategory extends Category {
 			'data_type'      => 'int',
 			'null_allowed'   => TRUE,
 		],
+		'product_category_image' => [
+			'data_type'      => 'text',
+			'data_length'    => '256',
+			'null_allowed'   => TRUE,
+		],
 	];
 
 	protected $indexes = [
@@ -39,4 +46,57 @@ class ProductCategory extends Category {
 	protected $foreign_keys = [
 		'product_category_parent_id' => ['product_category', 'product_category_id'],
 	];
+
+	public function hasImage() {
+		return TRUE;
+	}
+
+	public function getImageUrl() {
+		if (is_null($this->image)) {
+			return NULL;
+		}
+
+		$site = $this->config->siteConfig();
+		$language = $site->language;
+		$theme = $site->theme;
+		$path = '/sites/'.$site->namespace.'/themes/product_category_images/';
+		return $path.$this->image;
+	}
+
+	public function getImageThumbnailUrl() {
+		if (is_null($this->image)) {
+			return NULL;
+		}
+
+		$site = $this->config->siteConfig();
+		$language = $site->language;
+		$theme = $site->theme;
+		$path = '/sites/'.$site->namespace.'/themes/product_category_images/';
+		return $path.'tn-'.$this->image;
+	}
+
+	public function uploadImage($tmp_name, $filename) {
+		$site = $this->config->siteConfig();
+		$language = $site->language;
+		$theme = $site->theme;
+		$root = __DIR__.DS.'..'.DS.'..'.DS.'..'.DS.'..'.DS;
+		$path = $root.'sites'.DS.$site->namespace.DS.'themes'.DS.'product_category_images'.DS;
+		if (!file_exists($path)) {
+			mkdir($path);
+		}
+
+		if ($this->image && file_exists($path.$this->image)) {
+			unlink($path.$this->image);
+		}
+		if ($this->image && file_exists($path.'tn-'.$this->image)) {
+			unlink($path.'tn-'.$this->image);
+		}
+
+		// copy the file
+		copy($tmp_name, $path.$filename);
+		$this->makeThumbnails($path, $filename);
+
+		$this->image = $filename;
+		$this->update();
+	}
 }

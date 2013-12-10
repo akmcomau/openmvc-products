@@ -95,4 +95,15 @@ class Products extends Controller {
 		$this->response->setContent($template->render());
 	}
 
+	public function search() {
+		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
+
+
+		$data = [
+		];
+
+		$template = $this->getTemplate('pages/search_product.php', $data, 'modules'.DS.'products');
+		$this->response->setContent($template->render());
+	}
+
 }
