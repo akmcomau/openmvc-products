@@ -10,6 +10,10 @@ class ProductGrid extends Widget {
 
 	protected $products = [];
 
+	public function getProductCount() {
+		return count($this->products);
+	}
+
 	public function getProducts(array $params = NULL, array $ordering = NULL, array $pagination = NULL) {
 		$model = new Model($this->config, $this->database);
 		$product = $model->getModel('\modules\products\classes\models\Product');

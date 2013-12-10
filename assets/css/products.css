@@ -14,6 +14,33 @@
 	color: darkred;
 	font-size: 1.2em;
 }
+.category-cell {
+	height: 50px;
+	text-align: center;
+}
+.category-cell h4 {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.category-cell a.category {
+	height: 50px;
+	line-height: 50px;
+}
+.category-cell-image {
+	height: 150px;
+	text-align: center;
+}
+.category-cell-image h4 {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.category-cell-image a.category {
+	height: 100px;
+	line-height: 100px;
+}
+.category-cell-image img {
+	height: 75%;
+}
 .view-product .image {
 	text-align: center;
 }
@@ -32,3 +59,4 @@
 .view-product .details .table th {
 	width: 25%;
 }
+

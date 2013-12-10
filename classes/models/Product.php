@@ -95,6 +95,13 @@ class Product extends Model implements ItemInterface {
 		]);
 	}
 
+	protected $relationships = [
+		'product_category' => [
+			'where_fields'  => ['product_category_id'],
+			'join_clause'   => 'LEFT JOIN product_category_link USING (product_id) LEFT JOIN product_category USING (product_category_id)',
+		],
+	];
+
 	public function getBrandName() {
 		$brand = $this->getBrand();
 		return $brand ? $brand->name : NULL;

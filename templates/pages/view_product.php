@@ -12,6 +12,7 @@
 			?>
 		</div>
 		<div class="col-md-9 col-sm-9 details">
+			<hr class="separator-2column" />
 			<div class="row">
 				<div class="col-md-3 col-sm-3 title-2column"><?php echo $text_name; ?>:</div>
 				<div class="col-md-9 col-sm-9 "><?php echo htmlspecialchars($product->name); ?></div>
