@@ -45,7 +45,7 @@
 			<?php if ($product->description) { ?>
 				<div class="row">
 					<div class="col-md-3 col-sm-3 title-2column"><?php echo $text_description; ?>:</div>
-					<div class="col-md-9 col-sm-9 "><?php echo htmlspecialchars($product->description); ?></div>
+					<div class="col-md-9 col-sm-9 "><?php echo $product->description; ?></div>
 				</div>
 				<hr class="separator-2column" />
 			<?php } ?>

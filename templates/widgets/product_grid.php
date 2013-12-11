@@ -13,7 +13,7 @@
 				?>
 			</a>
 			<div class="add-to-cart">
-				<span class="price"><?php echo  money_format('%n', $product->sell); ?></span>
+				<div class="price"><?php echo  money_format('%n', $product->sell); ?></div>
 				<a href="<?php echo $this->url->getUrl('Cart', 'add', ['product', $product->id]); ?>" class="btn btn-primary"><?php echo $text_add_to_cart; ?></a>
 			</div>
 		</div>

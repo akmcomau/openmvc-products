@@ -6,6 +6,7 @@ use core\classes\exceptions\RedirectException;
 use core\classes\exceptions\SoftRedirectException;
 use core\classes\renderable\Controller;
 use core\classes\Model;
+use core\classes\FormValidator;
 use core\classes\Pagination;
 use core\widgets\CategoryGrid;
 use modules\products\widgets\ProductGrid;
@@ -97,13 +98,72 @@ class Products extends Controller {
 
 	public function search() {
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
+		$form = $this->getProductSearchForm();
+		$model = new Model($this->config, $this->database);
 
+		$params = ['site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()]];
+		if ($form->validate()) {
+			$values = $form->getSubmittedValues();
+			foreach ($values as $name => $value) {
+				if ($name == 'search_query' && !empty($value)) {
+					$value = strtolower($value);
+					$params['or-1'] = [
+						'name' => ['type'=>'like', 'value'=>'%'.$value.'%'],
+						'description' => ['type'=>'like', 'value'=>'%'.$value.'%'],
+					];
+				}
+				elseif (preg_match('/search_(brand|category)/', $name, $matches)) {
+					if ((int)$value) {
+						$params['product_'.$matches[1].'_id'] = (int)$value;
+					}
+				}
+			}
+		}
+
+		// get all the product types
+		$products = new ProductGrid($this->config, $this->database, $this->request, $this->language);
+		$products->getProducts($params);
+
+		$brand = $model->getModel('\modules\products\classes\models\ProductBrand');
+		$brands = $brand->getAsOptions($this->allowedSiteIDs());
+
+		$category = $model->getModel('\modules\products\classes\models\ProductCategory');
+		$categories = $category->getAsOptions($this->allowedSiteIDs());
 
 		$data = [
+			'form' => $form,
+			'brands' => $brands,
+			'categories' => $categories,
+			'products' => $products,
 		];
 
 		$template = $this->getTemplate('pages/search_product.php', $data, 'modules'.DS.'products');
 		$this->response->setContent($template->render());
+	}
+
+	protected function getProductSearchForm() {
+		$inputs = [
+			'search_query' => [
+				'type' => 'string',
+				'required' => FALSE,
+				'max_length' => 256,
+				'message' => $this->language->get('error_search_query'),
+			],
+			'search_brand' => [
+				'type' => 'string',
+				'required' => FALSE,
+				'max_length' => 256,
+				'message' => $this->language->get('error_search_brand'),
+			],
+			'search_category' => [
+				'type' => 'string',
+				'required' => FALSE,
+				'max_length' => 256,
+				'message' => $this->language->get('error_search_category'),
+			],
+		];
+
+		return new FormValidator($this->request, 'form-products-search', $inputs);
 	}
 
 }

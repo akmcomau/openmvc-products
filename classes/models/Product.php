@@ -89,18 +89,48 @@ class Product extends Model implements ItemInterface {
 		'product_brand_id'  => ['product_brand', 'product_brand_id'],
 	];
 
-	public function getBrand() {
-		$this->getModel('\modules\products\classes\models\ProductBrand')->get([
-			'id' => $this->brand_id
-		]);
-	}
-
 	protected $relationships = [
 		'product_category' => [
 			'where_fields'  => ['product_category_id'],
 			'join_clause'   => 'LEFT JOIN product_category_link USING (product_id) LEFT JOIN product_category USING (product_category_id)',
 		],
 	];
+
+	public function update() {
+		// update the product
+		parent::update();
+
+		// get the link
+		$link = $this->getModel('\modules\products\classes\models\ProductCategoryLink')->get([
+			'product_id' => $this->id,
+		]);
+
+		// update the category
+		$this->getCategory();
+		$category = $this->objects['category'];
+		if ($category && $link) {
+			// update the category
+			$link->product_category_id = $category->id;
+			$link->update();
+		}
+		elseif ($category && !$link) {
+			// insert the category
+			$link = $this->getModel('\modules\products\classes\models\ProductCategoryLink');
+			$link->product_id = $this->id;
+			$link->product_category_id = $category->id;
+			$link->insert();
+		}
+		elseif (!$category && $link) {
+			// remove the link
+			$link->delete();
+		}
+	}
+
+	public function getBrand() {
+		$this->getModel('\modules\products\classes\models\ProductBrand')->get([
+			'id' => $this->brand_id
+		]);
+	}
 
 	public function getBrandName() {
 		$brand = $this->getBrand();
@@ -133,7 +163,7 @@ class Product extends Model implements ItemInterface {
 			";
 			$record = $this->database->querySingle($sql);
 			if ($record) {
-				 $this->objects['category'] = $this->getModel('\\modules\\products\\classes\\models\\ProductCategory', $record);
+				 $this->objects['category'] = $this->getModel('\modules\products\classes\models\ProductCategory', $record);
 			}
 			else {
 				$this->objects['category'] =  NULL;

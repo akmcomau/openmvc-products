@@ -44,7 +44,12 @@
 								<div class="col-md-6">
 									<div class="col-md-3 col-sm-3 title-2column"><?php echo $text_brand; ?></div>
 									<div class="col-md-9 col-sm-9 ">
-										<input type="text" class="form-control" name="search_brand" value="<?php echo htmlspecialchars($form->getValue('search_brand')); ?>" />
+										<select name="search_brand" class="form-control">
+											<option value=""></option>
+											<?php foreach ($brands as $value => $text) { ?>
+												<option value="<?php echo $value; ?>" <?php if ($value == $form->getValue('search_brand')) echo 'selected="selected"'; ?>><?php echo $text; ?></option>
+											<?php } ?>
+										</select>
 										<?php echo $form->getHtmlErrorDiv('search_brand'); ?>
 									</div>
 								</div>
@@ -55,7 +60,12 @@
 							<div class="col-md-6">
 								<div class="col-md-3 col-sm-3 title-2column"><?php echo $text_category; ?></div>
 								<div class="col-md-9 col-sm-9 ">
-									<input type="text" class="form-control" name="search_category" value="<?php echo htmlspecialchars($form->getValue('search_category')); ?>" />
+									<select name="search_category" class="form-control">
+										<option value=""></option>
+										<?php foreach ($categories as $value => $text) { ?>
+											<option value="<?php echo $value; ?>" <?php if ($value == $form->getValue('search_category')) echo 'selected="selected"'; ?>><?php echo $text; ?></option>
+										<?php } ?>
+									</select>
 									<?php echo $form->getHtmlErrorDiv('search_category'); ?>
 								</div>
 							</div>
@@ -66,8 +76,11 @@
 								<div class="col-md-6">
 									<div class="col-md-3 col-sm-3 title-2column"><?php echo $text_active; ?></div>
 									<div class="col-md-9 col-sm-9 ">
-										<input type="text" class="form-control" name="search_active" value="<?php echo htmlspecialchars($form->getValue('search_active')); ?>" />
-										<?php echo $form->getHtmlErrorDiv('search_active'); ?>
+										<select name="search_active" class="form-control">
+											<option value=""></option>
+											<option value="1" <?php if (strlen($form->getValue('search_active')) && (int)$form->getValue('search_active') == 1) echo 'selected="selected"'; ?>><?php echo $text_yes; ?></option>
+											<option value="0" <?php if (strlen($form->getValue('search_active')) && (int)$form->getValue('search_active') == 0) echo 'selected="selected"'; ?>><?php echo $text_no; ?></option>
+										</select>
 									</div>
 								</div>
 							</div>

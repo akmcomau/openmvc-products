@@ -5,6 +5,8 @@
 .product-cell h4 {
 	margin-bottom: 0px;
 	padding-bottom: 0px;
+	max-height: 40px;
+	overflow: hidden;
 }
 .product-cell a.product {
 	height: 160px;
@@ -21,6 +23,8 @@
 .category-cell h4 {
 	margin-bottom: 0px;
 	padding-bottom: 0px;
+	max-height: 40px;
+	overflow: hidden;
 }
 .category-cell a.category {
 	height: 50px;
@@ -33,6 +37,8 @@
 .category-cell-image h4 {
 	margin-bottom: 0px;
 	padding-bottom: 0px;
+	max-height: 40px;
+	overflow: hidden;
 }
 .category-cell-image a.category {
 	height: 100px;

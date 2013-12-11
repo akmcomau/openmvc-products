@@ -39,9 +39,17 @@ class Products extends Controller {
 		if ($form_search->validate()) {
 			$values = $form_search->getSubmittedValues();
 			foreach ($values as $name => $value) {
-				if (preg_match('/^search_(first_name|last_name|email|login)$/', $name, $matches) && $value != '') {
+				if (preg_match('/^search_(sku|model|name)$/', $name, $matches) && $value != '') {
 					$value = strtolower($value);
-					$params['customer_'.$matches[1]] = ['type'=>'like', 'value'=>'%'.$value.'%'];
+					$params[$matches[1]] = ['type'=>'like', 'value'=>'%'.$value.'%'];
+				}
+				elseif (preg_match('/search_(brand|category)/', $name, $matches)) {
+					if ((int)$value) {
+						$params['product_'.$matches[1].'_id'] = (int)$value;
+					}
+				}
+				elseif ($name == 'search_active' && $value != '') {
+					$params['active'] = (int)$value ? TRUE : FALSE;
 				}
 			}
 		}
@@ -51,6 +59,12 @@ class Products extends Controller {
 		$product = $model->getModel('\modules\products\classes\models\Product');
 		$products = $product->getMulti($params, $pagination->getOrdering(), $pagination->getLimitOffset());
 		$pagination->setRecordCount($product->getCount($params));
+
+		$brand = $model->getModel('\modules\products\classes\models\ProductBrand');
+		$brands = $brand->getAsOptions($this->allowedSiteIDs());
+
+		$category = $model->getModel('\modules\products\classes\models\ProductCategory');
+		$categories = $category->getAsOptions($this->allowedSiteIDs());
 
 		$message_js = NULL;
 		switch($message) {
@@ -72,6 +86,8 @@ class Products extends Controller {
 			'products' => $products,
 			'pagination' => $pagination,
 			'message_js' => $message_js,
+			'brands' => $brands,
+			'categories' => $categories,
 		];
 
 		$template = $this->getTemplate('pages/administrator/list_products.php', $data, 'modules'.DS.'products');
@@ -152,6 +168,17 @@ class Products extends Controller {
 			$product->removeImage($delete_images[$i]);
 		}
 
+		$product->setCategory(NULL);
+		if ((int)$form->getValue('category')) {
+			$product_category = $product->getModel('\modules\products\classes\models\ProductCategory')->get([
+				'id' => (int)$form->getValue('category'),
+			]);
+			if ($product_category) {
+				$product->setCategory($product_category);
+			}
+		}
+
+		// set category
 		$product->setCategory(NULL);
 		if ((int)$form->getValue('category')) {
 			$product_category = $product->getModel('\modules\products\classes\models\ProductCategory')->get([
