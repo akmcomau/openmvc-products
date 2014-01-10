@@ -29,7 +29,7 @@ class Products extends Controller {
 
 	}
 
-	public function index($message = NULL) {
+	public function index($message = NULL, $all_deleted = 1) {
 		$this->language->loadLanguageFile('administrator/products.php', 'modules'.DS.'products');
 		$form_search = $this->getProductSearchForm();
 
@@ -70,6 +70,9 @@ class Products extends Controller {
 		switch($message) {
 			case 'delete-success':
 				$message_js = 'FormValidator.displayPageNotification("success", "'.htmlspecialchars($this->language->get('notification_product_delete_success')).'");';
+				if ($all_deleted == 0) {
+					$message_js = 'FormValidator.displayPageNotification("error", "'.htmlspecialchars($this->language->get('notification_product_delete_not_all')).'");';
+				}
 				break;
 
 			case 'add-success':
@@ -261,6 +264,28 @@ class Products extends Controller {
 		];
 		$template = $this->getTemplate('pages/administrator/add_edit_product.php', $data, 'modules'.DS.'products');
 		$this->response->setContent($template->render());
+	}
+
+	public function deleteProducts() {
+		if ($this->request->requestParam('selected')) {
+			$all_deleted = 1;
+			$model = new Model($this->config, $this->database);
+			$checkout_model = $model->getModel('\modules\products\classes\models\CheckoutProduct');
+			$product_model = $model->getModel('\modules\products\classes\models\Product');
+			foreach ($this->request->requestParam('selected') as $id) {
+				// check if the product has been purchased
+				if ($checkout_model->get(['product_id' => $id])) {
+					$all_deleted = 0;
+					continue;
+				}
+
+				$product = $product_model->get(['id' => $id]);
+				$this->siteProtection($product);
+				$product->delete();
+			}
+
+			throw new RedirectException($this->url->getUrl('administrator/Products', 'index', ['delete-success', $all_deleted]));
+		}
 	}
 
 	protected function getProductForm($is_add_page, $product) {

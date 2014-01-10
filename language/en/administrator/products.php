@@ -42,6 +42,7 @@ $_LANGUAGE = [
 	'error_product_cost' => 'Please enter a valid amount',
 	'error_product_sell' => 'Please enter a valid amount',
 	'error_sku_already_exists' => 'A product with this SKU already exists',
+	'notification_product_delete_not_all' => 'Products that have been been purchased cannot be deleted.',
 
 	'error_search_sku' => 'Cannot be longer than 64 characters',
 	'error_search_model' => 'Cannot be longer than 64 characters',

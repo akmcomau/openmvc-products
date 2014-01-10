@@ -105,7 +105,7 @@
 					<div class="pagination">
 						<?php echo $pagination->getPageLinks(); ?>
 					</div>
-					<form action="<?php echo $this->url->getUrl('administrator/Products', 'deleteProduct'); ?>" method="post">
+					<form action="<?php echo $this->url->getUrl('administrator/Products', 'deleteProducts'); ?>" method="post">
 						<table class="table">
 							<tr>
 								<th></th>
@@ -127,7 +127,7 @@
 								<td><?php echo money_format('%n', $product->sell); ?></td>
 								<td><?php echo $product->active ? $text_yes : $text_no; ?></td>
 								<td>
-									<a href="<?php echo $this->url->getUrl('administrator/Products', 'editProduct', [$product->id]); ?>" class="btn btn-primary"><i class="icon-edit-sign" title="<?php echo $text_edit; ?>"></i></a>
+									<a href="<?php echo $this->url->getUrl('administrator/Products', 'editProduct', [$product->id]); ?>" class="btn btn-primary"><i class="fa fa-edit" title="<?php echo $text_edit; ?>"></i></a>
 								</td>
 							</tr>
 							<?php } ?>

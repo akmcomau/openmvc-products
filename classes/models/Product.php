@@ -126,6 +126,32 @@ class Product extends Model implements ItemInterface {
 		}
 	}
 
+	public function delete() {
+		// delete the images
+		$this->removed_images = $this->getImages();
+		$this->images = [];
+		$this->updateImages();
+
+		// delete the categories
+		$categories = $this->getModel('\modules\products\classes\models\ProductCategoryLink')->getMulti([
+			'product_id' => $this->id
+		]);
+		foreach ($categories as $category) {
+			$category->delete();
+		}
+
+		// delete the attributes
+		$attributes = $this->getModel('\modules\products\classes\models\ProductAttributeValue')->getMulti([
+			'product_id' => $this->id
+		]);
+		foreach ($attributes as $attribute) {
+			$attribute->delete();
+		}
+
+		// delete the product
+		parent::delete();
+	}
+
 	public function getBrand() {
 		$this->getModel('\modules\products\classes\models\ProductBrand')->get([
 			'id' => $this->brand_id
