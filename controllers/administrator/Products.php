@@ -191,6 +191,31 @@ class Products extends Controller {
 				$product->setCategory($product_category);
 			}
 		}
+
+		// add the attributes
+		$attributes = $product->getAttributes();
+		foreach ($product->getAllAttributes() as $attribute) {
+			if ($form->getValue('attribute_'.$attribute->id)) {
+				if (isset($attributes[$attribute->id])) {
+					$attributes[$attribute->id]->product_attribute_option_id   = $attribute->getValueOption($form->getValue('attribute_'.$attribute->id));
+					$attributes[$attribute->id]->product_attribute_category_id = $attribute->getValueCategory($form->getValue('attribute_'.$attribute->id));
+					$attributes[$attribute->id]->product_attribute_value_text  = $attribute->getValueText($form->getValue('attribute_'.$attribute->id));
+				}
+				else {
+					$attribute_value = $product->getModel('\modules\products\classes\models\ProductAttributeValue');
+					$attribute_value->product_id                    = $product->id;
+					$attribute_value->product_attribute_id          = $attribute->id;
+					$attribute_value->product_attribute_option_id   = $attribute->getValueOption($form->getValue('attribute_'.$attribute->id));
+					$attribute_value->product_attribute_category_id = $attribute->getValueCategory($form->getValue('attribute_'.$attribute->id));
+					$attribute_value->product_attribute_value_text  = $attribute->getValueText($form->getValue('attribute_'.$attribute->id));
+					$attributes[] = $attribute_value;
+				}
+			}
+			else if (isset($attributes['attribute_'.$attribute->id])) {
+				unset($attributes['attribute_'.$attribute->id]);
+			}
+		}
+		$product->setObjectCache('attributes', $attributes);
 	}
 
 
@@ -363,6 +388,15 @@ class Products extends Controller {
 				],
 			],
 		];
+
+		// add the attributes
+		foreach ($product->getAllAttributes() as $attribute) {
+			$inputs['attribute_'.$attribute->id] = [
+				'type' => $attribute->getFormType(),
+				'required' => $attribute->required_admin,
+				'message' => $this->language->get('error_product_generic'),
+			];
+		}
 
 		return new FormValidator($this->request, 'form-product', $inputs, $validators);
 	}

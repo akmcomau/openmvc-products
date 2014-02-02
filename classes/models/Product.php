@@ -2,6 +2,7 @@
 
 namespace modules\products\classes\models;
 
+use core\classes\URL;
 use core\classes\Model;
 use modules\checkout\classes\models\ItemInterface;
 use modules\checkout\classes\models\Checkout;
@@ -96,10 +97,36 @@ class Product extends Model implements ItemInterface {
 		],
 	];
 
+	public function insert() {
+		// insert the product
+		parent::insert();
+		$this->updateCategory();
+		$this->updateAttributes();
+	}
+
 	public function update() {
 		// update the product
 		parent::update();
+		$this->updateCategory();
+		$this->updateAttributes();
+	}
 
+	protected function updateAttributes() {
+		if (!isset($this->objects['attributes'])) {
+			return;
+		}
+
+		foreach ($this->objects['attributes'] as $attribute) {
+			if ($attribute->id) {
+				$attribute->update();
+			}
+			else {
+				$attribute->insert();
+			}
+		}
+	}
+
+	protected function updateCategory() {
 		// get the link
 		$link = $this->getModel('\modules\products\classes\models\ProductCategoryLink')->get([
 			'product_id' => $this->id,
@@ -152,10 +179,24 @@ class Product extends Model implements ItemInterface {
 		parent::delete();
 	}
 
+	public function getAttributeValue($attribute) {
+		$attributes = $this->getAttributes();
+		if (isset($attributes[$attribute->id])) {
+			return $attributes[$attribute->id]->getValue();
+		}
+		return NULL;
+	}
+
 	public function getBrand() {
-		$this->getModel('\modules\products\classes\models\ProductBrand')->get([
+		if (isset($this->objects['brand'])) {
+			return $this->objects['brand'];
+		}
+
+		$this->objects['brand'] = $this->getModel('\modules\products\classes\models\ProductBrand')->get([
 			'id' => $this->brand_id
 		]);
+
+		return $this->objects['brand'];
 	}
 
 	public function getBrandName() {
@@ -259,14 +300,68 @@ class Product extends Model implements ItemInterface {
 		$checkout_prod->insert();
 	}
 
-	public function getUrl($url) {
+	public function getAllAttributes() {
+		if (isset($this->objects['all_attributes'])) {
+			return $this->objects['all_attributes'];
+		}
+
+		$sql = "
+			SELECT
+				*
+			FROM
+				product_attribute
+			WHERE
+				product_attribute.site_id = ".(int)$this->config->siteConfig()->site_id."
+		";
+		$records = $this->database->queryMulti($sql);
+
+		$this->objects['all_attributes'] = [];
+		foreach ($records as $record) {
+			$this->objects['all_attributes'][] = $this->getModel('\modules\products\classes\models\ProductAttribute', $record);
+		}
+
+		return $this->objects['all_attributes'];
+	}
+
+	public function getAttributes() {
+		if (isset($this->objects['attributes'])) {
+			return $this->objects['attributes'];
+		}
+
+		$sql = "
+			SELECT
+				*,
+				product_attribute.product_attribute_id
+			FROM
+				product_attribute_value
+				JOIN product_attribute USING (product_attribute_id)
+				LEFT JOIN product_attribute_option USING (product_attribute_option_id)
+			WHERE
+				product_id = ".(int)$this->id."
+				AND product_attribute.site_id = ".(int)$this->config->siteConfig()->site_id."
+		";
+		$records = $this->database->queryMulti($sql);
+
+		$this->objects['attributes'] = [];
+		foreach ($records as $record) {
+			$attribute = $this->getModel('\modules\products\classes\models\ProductAttributeValue', $record);
+			$attribute->setObjectCache('product_attribute', $this->getModel('\modules\products\classes\models\ProductAttribute', $record));
+			if ($record['product_attribute_option_id']) {
+				$attribute->setObjectCache('product_attribute_value', $this->getModel('\modules\products\classes\models\ProductAttributeValue', $record));
+			}
+			$this->objects['attributes'][$record['product_attribute_id']] = $attribute;
+		}
+
+		return $this->objects['attributes'];
+	}
+
+	public function getUrl(URL $url) {
 		return $url->getUrl('Products', 'view', [$this->id, $this->name]);
 	}
 
 	public function allowMultiple() {
 		return TRUE;
 	}
-
 
 	public function getMaxQuantity() {
 		return 1000000;

@@ -139,6 +139,16 @@
 						</div>
 						<hr class="separator-2column" />
 
+						<?php foreach ($product->getAllAttributes() as $attribute) { ?>
+							<div class="row">
+								<div class="col-md-3 col-sm-3 title-2column"><?php echo $attribute->name; ?></div>
+								<div class="col-md-9 col-sm-9 ">
+									<?php echo $attribute->renderAdmin($form, $this->language, 'attribute_'.$attribute->id, $product->getAttributeValue($attribute)); ?>
+								</div>
+							</div>
+							<hr class="separator-2column" />
+						<?php } ?>
+
 						<div class="col-md-12 align-center">
 							<button class="btn btn-primary" type="submit" name="form-product-submit"><?php
 								if ($is_add_page) echo $text_product_add_button;

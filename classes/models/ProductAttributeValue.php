@@ -26,6 +26,10 @@ class ProductAttributeValue extends Model {
 			'data_type'      => 'int',
 			'null_allowed'   => TRUE,
 		],
+		'product_attribute_category_id' => [
+			'data_type'      => 'int',
+			'null_allowed'   => TRUE,
+		],
 		'product_attribute_value_text' => [
 			'data_type'      => 'text',
 			'data_length'    => 256,
@@ -38,6 +42,7 @@ class ProductAttributeValue extends Model {
 		'product_attribute_id',
 		'product_attribute_option_id',
 		'product_attribute_value_text',
+		'product_attribute_category_id',
 	];
 
 	protected $foreign_keys = [
@@ -45,4 +50,26 @@ class ProductAttributeValue extends Model {
 		'product_attribute_id' => ['product_attribute', 'product_attribute_id'],
 		'product_attribute_option_id' => ['product_attribute_option', 'product_attribute_option_id'],
 	];
+
+	public function getProductAttribute() {
+		if (isset($this->objects['product_attribute'])) {
+			return $this->objects['product_attribute'];
+		}
+
+		$this->objects['product_attribute'] = $this->getModel('\modules\products\classes\models\ProductAttribute')->get([
+			'id' => $this->product_attribute_id
+		]);
+
+		return $this->objects['product_attribute'];
+	}
+
+	public function getValue() {
+		$type_array = explode('|', $this->getProductAttribute()->type);
+		switch ($type_array[0]) {
+			case 'category':
+				return $this->product_attribute_category_id;
+				break;
+		}
+		throw new ModelException('Cannot get form type of attribute type: '.$this->type);
+	}
 }

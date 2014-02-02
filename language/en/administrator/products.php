@@ -50,6 +50,7 @@ $_LANGUAGE = [
 	'error_search_brand' => 'Please select a valid brand',
 	'error_search_category' => 'Please select a valid category',
 	'error_search_active' => 'Please select a valid value',
+	'error_product_generic' => 'Please enter a valid value',
 
 	'notification_brand_update_success' => 'Product brand has been updated successfully',
 	'notification_brand_update_error' => 'Updating product brand failed, please check your values below',
