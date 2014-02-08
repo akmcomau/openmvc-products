@@ -20,9 +20,9 @@ class ProductGrid extends Widget {
 		$this->products = $product->getMulti($params, $ordering, $pagination);
 	}
 
-	public function render() {
+	public function render($template = 'widgets/product_grid.php') {
 		$data = ['products' => $this->products];
-		$template = $this->getTemplate('widgets/product_grid.php', $data, 'modules'.DS.'products');
+		$template = $this->getTemplate($template, $data, 'modules'.DS.'products');
 		return $template->render();
 	}
 }
