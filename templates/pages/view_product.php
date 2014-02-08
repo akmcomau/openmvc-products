@@ -1,4 +1,4 @@
-<div class="container view-product">
+<div class="<?php echo $page_div_class; ?> view-product">
 	<h1><?php echo htmlspecialchars($product->name); ?></h1>
 	<div class="row">
 		<div class="col-md-3 col-sm-3 image">
