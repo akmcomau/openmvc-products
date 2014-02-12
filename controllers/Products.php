@@ -94,9 +94,15 @@ class Products extends Controller {
 		}
 		$this->siteProtection($product);
 
+		$description = str_replace("\n", '', $product->description);
+		$description = str_replace("\r", '', $description);
+		$description = strip_tags($description);
+		$description = preg_replace('/\s+/', ' ', $description);
+		$description = substr($description, 0, 160).'...';
+
 		$this->layout->addMetaTags([
 			'title'       => $product->name.' :: '.$this->config->siteConfig()->name,
-			'description' => 'asdf',
+			'description' => $description,
 			'keywords'    => $product->name.','.$product->model.','.$product->getBrandName(),
 		]);
 
