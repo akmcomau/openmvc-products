@@ -60,6 +60,12 @@ class Products extends Controller {
 				$group_name = htmlspecialchars($category->name);
 				$main_heading = $this->language->get('sub_categories', [htmlspecialchars($category->name)]);
 			}
+
+			$this->layout->addMetaTags([
+				'title'       => $category->name.' :: '.$this->config->siteConfig()->name,
+				/** 'description' => 'asdf',  @TODO, add to product_category */
+				'keywords'    => $category->name,
+			]);
 		}
 
 		$data = [
@@ -87,6 +93,12 @@ class Products extends Controller {
 			throw new SoftRedirectException($this->url->getControllerClass('Root'), 'error404');
 		}
 		$this->siteProtection($product);
+
+		$this->layout->addMetaTags([
+			'title'       => $product->name.' :: '.$this->config->siteConfig()->name,
+			'description' => 'asdf',
+			'keywords'    => $product->name.','.$product->model.','.$product->getBrandName(),
+		]);
 
 		$data = [
 			'product' => $product,
