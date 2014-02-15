@@ -13,6 +13,34 @@ use modules\products\widgets\ProductGrid;
 
 class Products extends Controller {
 
+	public function getAllUrls($include_filter = NULL, $exclude_filter = NULL) {
+		$controller = $this->url->getControllerClassName('\\'.get_class($this));
+		$model = new Model($this->config, $this->database);
+
+		$urls = [];
+		$products = $model->getModel('\modules\products\classes\models\Product')->getMulti([
+			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
+			'active' => TRUE,
+		]);
+		foreach ($products as $product) {
+			$urls[] = ['url' => $this->config->getSiteUrl().$this->url->getUrl($controller, 'view', [$product->id, $product->name])];
+		}
+
+		$categories = $model->getModel('\modules\products\classes\models\ProductCategory')->getMulti([
+			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
+		]);
+		foreach ($categories as $category) {
+			$urls[] = ['url' => $this->config->getSiteUrl().$this->url->getUrl($controller, 'index', ['category', $category->id, $category->name])];
+		}
+
+		$urls[] = ['url' => $this->config->getSiteUrl().$this->url->getUrl($controller, 'index', ['category'])];
+
+		return array_merge(
+			parent::getAllUrls(NULL, '/view/'),
+			$urls
+		);
+	}
+
 	public function index($type = NULL, $id = NULL) {
 		$model = new Model($this->config, $this->database);
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
