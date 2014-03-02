@@ -43,11 +43,13 @@
 				<hr class="separator-2column" />
 			<?php } ?>
 			<?php foreach ($product->getAttributes() as $attribute) { ?>
-				<div class="row">
-					<div class="col-md-3 col-sm-3 title-2column"><?php echo $attribute->getProductAttribute()->name; ?>:</div>
-					<div class="col-md-9 col-sm-9 "><?php echo htmlspecialchars($attribute->product_attribute_value_text); ?></div>
-				</div>
-				<hr class="separator-2column" />
+				<?php if (!empty($attribute->product_attribute_value_text)) { ?>
+					<div class="row">
+						<div class="col-md-3 col-sm-3 title-2column"><?php echo $attribute->getProductAttribute()->name; ?>:</div>
+						<div class="col-md-9 col-sm-9 "><?php echo htmlspecialchars($attribute->product_attribute_value_text); ?></div>
+					</div>
+					<hr class="separator-2column" >
+				<?php } ?>
 			<?php } ?>
 			<?php if ($product->description) { ?>
 				<div class="row">

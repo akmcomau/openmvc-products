@@ -62,7 +62,9 @@ class Products extends Controller {
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
 			'active' => TRUE,
 			'parent_id' => (int)$id ? (int)$id : NULL,
-		]);
+			],
+			['name' => 'asc']
+		);
 
 		$products = new ProductGrid($this->config, $this->database, $this->request, $this->language);
 		$params = [
@@ -147,15 +149,18 @@ class Products extends Controller {
 		$form = $this->getProductSearchForm();
 		$model = new Model($this->config, $this->database);
 
-		$params = ['site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()]];
+		$params = [
+			'active' => TRUE,
+			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()]
+		];
 		if ($form->validate()) {
 			$values = $form->getSubmittedValues();
 			foreach ($values as $name => $value) {
 				if ($name == 'search_query' && !empty($value)) {
 					$value = strtolower($value);
-					$params['or-1'] = [
-						'name' => ['type'=>'like', 'value'=>'%'.$value.'%'],
-						'description' => ['type'=>'like', 'value'=>'%'.$value.'%'],
+					$params['or:1'] = [
+						'name' => ['type'=>'likelower', 'value'=>'%'.$value.'%'],
+						'description' => ['type'=>'likelower', 'value'=>'%'.$value.'%'],
 					];
 				}
 				elseif (preg_match('/search_(brand|category)/', $name, $matches)) {
@@ -168,7 +173,7 @@ class Products extends Controller {
 
 		// get all the product types
 		$products = new ProductGrid($this->config, $this->database, $this->request, $this->language);
-		$products->getProducts($params);
+		$products->getProducts($params, NULL, ['limit' => 18]);
 
 		$brand = $model->getModel('\modules\products\classes\models\ProductBrand');
 		$brands = $brand->getAsOptions($this->allowedSiteIDs());
