@@ -92,6 +92,10 @@ class ProductAttribute extends Model {
 			case 'category':
 				return 'integer';
 				break;
+
+			case 'text':
+				return 'text';
+				break;
 		}
 		throw new ModelException('Cannot get form type of attribute type: '.$this->type);
 	}
@@ -126,11 +130,15 @@ class ProductAttribute extends Model {
 		return NULL;
 	}
 
-	public function renderAdmin($form, $language, $element_name, $selected) {
+	public function renderAdmin($form, $language, $element_name, $value) {
 		$type_array = explode('|', $this->type);
 		switch ($type_array[0]) {
 			case 'category':
-				return $this->renderCategory($form, $language, $element_name, $selected, $type_array[1]);
+				return $this->renderCategory($form, $language, $element_name, $value, $type_array[1]);
+				break;
+
+			case 'text':
+				return $this->renderText($form, $language, $element_name, $value);
 				break;
 		}
 	}
@@ -148,6 +156,19 @@ class ProductAttribute extends Model {
 		];
 
 		$filename = 'elements'.DS.'category.php';
+		$template = new Template($this->config, $language, $filename, $data, 'modules'.DS.'products');
+		return $template->render();
+	}
+
+	protected function renderText($form, $language, $element_name, $value) {
+		$data = [
+			'form' => $form,
+			'language' => $language,
+			'element_name' => $element_name,
+			'value' => $value,
+		];
+
+		$filename = 'elements'.DS.'text.php';
 		$template = new Template($this->config, $language, $filename, $data, 'modules'.DS.'products');
 		return $template->render();
 	}

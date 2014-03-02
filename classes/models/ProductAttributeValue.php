@@ -2,6 +2,7 @@
 
 namespace modules\products\classes\models;
 
+use core\classes\exceptions\ModelException;
 use core\classes\Model;
 
 class ProductAttributeValue extends Model {
@@ -32,7 +33,6 @@ class ProductAttributeValue extends Model {
 		],
 		'product_attribute_value_text' => [
 			'data_type'      => 'text',
-			'data_length'    => 256,
 			'null_allowed'   => TRUE,
 		],
 	];
@@ -68,6 +68,10 @@ class ProductAttributeValue extends Model {
 		switch ($type_array[0]) {
 			case 'category':
 				return $this->product_attribute_category_id;
+				break;
+
+			case 'text':
+				return $this->product_attribute_value_text;
 				break;
 		}
 		throw new ModelException('Cannot get form type of attribute type: '.$this->type);
