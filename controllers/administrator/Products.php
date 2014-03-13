@@ -41,7 +41,7 @@ class Products extends Controller {
 			foreach ($values as $name => $value) {
 				if (preg_match('/^search_(sku|model|name)$/', $name, $matches) && $value != '') {
 					$value = strtolower($value);
-					$params[$matches[1]] = ['type'=>'like', 'value'=>'%'.$value.'%'];
+					$params[$matches[1]] = ['type'=>'likelower', 'value'=>'%'.$value.'%'];
 				}
 				elseif (preg_match('/search_(brand|category)/', $name, $matches)) {
 					if ((int)$value) {

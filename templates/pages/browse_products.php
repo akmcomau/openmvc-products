@@ -5,8 +5,17 @@
 		echo $categories->render();
 	} ?>
 	<?php if ($products->getProductCount()) {
-		?><h2><?php echo $sub_heading; ?></h2><?php
-		echo $products->render();
+		?><h2><?php echo $sub_heading; ?></h2>
+		<div class="pagination">
+			<?php echo $pagination->getPageLinks(); ?>
+		</div>
+		<div class="clearfix"></div>
+		<?php echo $products->render(); ?>
+		<div class="pagination">
+			<?php echo $pagination->getPageLinks(); ?>
+		</div>
+		<div class="clearfix"></div>
+		<?php
 	}
 	if ($products->getProductCount() == 0 && $categories->getCategoryCount() == 0) { ?>
 		<h2><?php echo $this->language->get('no_products_found', [$group_name]); ?></h2>

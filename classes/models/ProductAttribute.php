@@ -94,7 +94,7 @@ class ProductAttribute extends Model {
 				break;
 
 			case 'text':
-				return 'text';
+				return 'string';
 				break;
 		}
 		throw new ModelException('Cannot get form type of attribute type: '.$this->type);

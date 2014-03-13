@@ -121,6 +121,9 @@ class Product extends Model implements ItemInterface {
 				$attribute->update();
 			}
 			else {
+				if (!$attribute->product_id) {
+					$attribute->product_id = $this->id;
+				}
 				$attribute->insert();
 			}
 		}

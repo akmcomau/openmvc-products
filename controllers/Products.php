@@ -20,6 +20,7 @@ class Products extends Controller {
 		$urls = [];
 		$products = $model->getModel('\modules\products\classes\models\Product')->getMulti([
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
+			'sell' => ['type'=>'>', 'value'=>0],
 			'active' => TRUE,
 		]);
 		foreach ($products as $product) {
@@ -61,21 +62,23 @@ class Products extends Controller {
 		$categories->getCategories($class, [
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
 			'active' => TRUE,
+			'sell' => ['type'=>'>', 'value'=>0],
 			'parent_id' => (int)$id ? (int)$id : NULL,
 			],
 			['name' => 'asc']
 		);
 
+		$pagination = new Pagination($this->request, 'name', 'asc');
 		$products = new ProductGrid($this->config, $this->database, $this->request, $this->language);
 		$params = [
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
-			'featured' => TRUE,
 			'active' => TRUE
 		];
 		if ($field) {
 			$params[$field] = $id;
 		}
-		$products->getProducts($params);
+		$products->getProducts($params, $pagination->getOrdering(), $pagination->getLimitOffset());
+		$pagination->setRecordCount($products->getProductCount($params));
 
 		$group_name = '';
 		$main_heading = $this->language->get('categories');
@@ -101,6 +104,7 @@ class Products extends Controller {
 		$data = [
 			'categories' => $categories,
 			'products' => $products,
+			'pagination' => $pagination,
 			'sub_heading' => $sub_heading,
 			'main_heading' => $main_heading,
 			'group_name' => $group_name,
@@ -117,6 +121,7 @@ class Products extends Controller {
 		$product = $model->getModel('\modules\products\classes\models\Product')->get([
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
 			'id' => $product_id,
+			'sell' => ['type'=>'>', 'value'=>0],
 			'active' => TRUE,
 		]);
 		if (!$product) {
@@ -151,6 +156,7 @@ class Products extends Controller {
 
 		$params = [
 			'active' => TRUE,
+			'sell' => ['type'=>'>', 'value'=>0],
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()]
 		];
 		if ($form->validate()) {
@@ -172,8 +178,10 @@ class Products extends Controller {
 		}
 
 		// get all the product types
+		$pagination = new Pagination($this->request, 'name', 'asc');
 		$products = new ProductGrid($this->config, $this->database, $this->request, $this->language);
-		$products->getProducts($params, NULL, ['limit' => 18]);
+		$products->getProducts($params, $pagination->getOrdering(), $pagination->getLimitOffset());
+		$pagination->setRecordCount($products->getProductCount($params));
 
 		$brand = $model->getModel('\modules\products\classes\models\ProductBrand');
 		$brands = $brand->getAsOptions($this->allowedSiteIDs());
@@ -184,6 +192,7 @@ class Products extends Controller {
 		$data = [
 			'form' => $form,
 			'brands' => $brands,
+			'pagination' => $pagination,
 			'categories' => $categories,
 			'products' => $products,
 		];
