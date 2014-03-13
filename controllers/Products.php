@@ -110,6 +110,7 @@ class Products extends Controller {
 			'group_name' => $group_name,
 		];
 
+		$this->layout->setTemplateData(['pagination' => $pagination->getStatus()]);
 		$template = $this->getTemplate('pages/browse_products.php', $data, 'modules'.DS.'products');
 		$this->response->setContent($template->render());
 	}
@@ -197,6 +198,7 @@ class Products extends Controller {
 			'products' => $products,
 		];
 
+		$this->layout->setTemplateData(['pagination' => $pagination->getStatus()]);
 		$template = $this->getTemplate('pages/search_product.php', $data, 'modules'.DS.'products');
 		$this->response->setContent($template->render());
 	}
