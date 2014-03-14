@@ -95,7 +95,7 @@ class Products extends Controller {
 			}
 
 			$this->layout->addMetaTags([
-				'title'       => $category->name.' :: '.$this->config->siteConfig()->name,
+				'title'       => $this->language->get('products_browse_in', $category->name).' :: '.$this->config->siteConfig()->name,
 				/** 'description' => 'asdf',  @TODO, add to product_category */
 				'keywords'    => $category->name,
 			]);
@@ -155,6 +155,7 @@ class Products extends Controller {
 		$form = $this->getProductSearchForm();
 		$model = new Model($this->config, $this->database);
 
+		$search_in = $search_for = 0;
 		$params = [
 			'active' => TRUE,
 			'sell' => ['type'=>'>', 'value'=>0],
@@ -164,6 +165,7 @@ class Products extends Controller {
 			$values = $form->getSubmittedValues();
 			foreach ($values as $name => $value) {
 				if ($name == 'search_query' && !empty($value)) {
+					$search_for++;
 					$value = strtolower($value);
 					$params['or:1'] = [
 						'name' => ['type'=>'likelower', 'value'=>'%'.$value.'%'],
@@ -172,6 +174,7 @@ class Products extends Controller {
 				}
 				elseif (preg_match('/search_(brand|category)/', $name, $matches)) {
 					if ((int)$value) {
+						$search_in++;
 						$params['product_'.$matches[1].'_id'] = (int)$value;
 					}
 				}
@@ -186,9 +189,35 @@ class Products extends Controller {
 
 		$brand = $model->getModel('\modules\products\classes\models\ProductBrand');
 		$brands = $brand->getAsOptions($this->allowedSiteIDs());
+		$brand = (int)$form->getValue('search_brand') ? $brand->get(['id' => $form->getValue('search_brand')]) : NULL;
 
 		$category = $model->getModel('\modules\products\classes\models\ProductCategory');
 		$categories = $category->getAsOptions($this->allowedSiteIDs());
+		$category = (int)$form->getValue('search_category') ? $category->get(['id' => $form->getValue('search_category')]) : NULL;
+
+		$single = $brand ? $brand : $category;
+
+		$description = '';
+		$title = $this->language->get('products_search_results');
+		if ($search_for == 1 && $search_in == 0) {
+			$description = $title = $this->language->get('products_search_results_for', $form->getValue('search_query'));
+		}
+		elseif ($search_for == 0 && $search_in == 1) {
+			$description = $title = $this->language->get('products_search_results_in', $single->name);
+		}
+		elseif ($search_for == 0 && $search_in == 2) {
+			$description = $title = $this->language->get('products_search_results_in2', [$category->name, $brand->name]);
+		}
+		elseif ($search_for == 1 && $search_in == 1) {
+			$description = $title = $this->language->get('products_search_results_for_in', [$form->getValue('search_query'), $single->name]);
+		}
+		elseif ($search_for == 1 && $search_in == 2) {
+			$description = $title = $this->language->get('products_search_results_for_in2', [$form->getValue('search_query'), $category->name, $brand->name]);
+		}
+		$this->layout->addMetaTags([
+			'title' => $title.' :: '.$this->config->siteConfig()->name,
+			'description' => $this->language->get('meta_description_prefix').$description.$this->language->get('meta_description_suffix'),
+		]);
 
 		$data = [
 			'form' => $form,
