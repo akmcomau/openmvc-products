@@ -115,7 +115,7 @@ class Products extends Controller {
 		$this->response->setContent($template->render());
 	}
 
-	public function view($product_id) {
+	public function view($product_id, $name = NULL) {
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
 
 		$model = new Model($this->config, $this->database);
@@ -129,6 +129,10 @@ class Products extends Controller {
 			throw new SoftRedirectException($this->url->getControllerClass('Root'), 'error404');
 		}
 		$this->siteProtection($product);
+
+		if (is_null($name)) {
+			throw new RedirectException($this->url->getUrl('Products', 'view', [$product->id, $product->name]));
+		}
 
 		$description = str_replace("\n", '', $product->description);
 		$description = str_replace("\r", '', $description);
