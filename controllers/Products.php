@@ -92,13 +92,16 @@ class Products extends Controller {
 				$sub_heading = $this->language->get('products_in', [htmlspecialchars($category->name)]);
 				$group_name = htmlspecialchars($category->name);
 				$main_heading = $this->language->get('sub_categories', [htmlspecialchars($category->name)]);
-			}
 
-			$this->layout->addMetaTags([
-				'title'       => $this->language->get('products_browse_in', $category->name).' :: '.$this->config->siteConfig()->name,
-				/** 'description' => 'asdf',  @TODO, add to product_category */
-				'keywords'    => $category->name,
-			]);
+				$this->layout->addMetaTags([
+					'title'       => $this->language->get('products_browse_in', $category->name).' :: '.$this->config->siteConfig()->name,
+					/** 'description' => 'asdf',  @TODO, add to product_category */
+					'keywords'    => $category->name,
+				]);
+			}
+			else {
+				throw new SoftRedirectException($this->url->getControllerClass('Root'), 'error404');
+			}
 		}
 
 		$data = [
