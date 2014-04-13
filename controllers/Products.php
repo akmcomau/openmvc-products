@@ -132,7 +132,7 @@ class Products extends Controller {
 		$pagination = new Pagination($this->request, 'name', 'asc');
 		$products = new ProductGrid($this->config, $this->database, $this->request, $this->language);
 		$params = [
-			'site_id' => $this->config->siteConfig()->site_id,
+			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
 			'id' => ['type' => 'in', 'value' => $product->getViewedIds($this->request)],
 			'active' => TRUE
 		];
