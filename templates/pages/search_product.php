@@ -71,14 +71,18 @@
 						<h3><?php echo $text_products_search_results; ?></h3>
 					</div>
 					<div class="widget-content">
-						<div class="pagination">
-							<?php echo $pagination->getPageLinks(); ?>
-						</div>
+						<?php if ($pagination->getMaxPage() > 1) { ?>
+							<div class="pagination">
+								<?php echo $pagination->getPageLinks(); ?>
+							</div>
+						<?php } ?>
 						<div class="clearfix"></div>
 						<?php echo $products->render(); ?>
-						<div class="pagination">
-							<?php echo $pagination->getPageLinks(); ?>
-						</div>
+						<?php if ($pagination->getMaxPage() > 1) { ?>
+							<div class="pagination">
+								<?php echo $pagination->getPageLinks(); ?>
+							</div>
+						<?php } ?>
 						<div class="clearfix"></div>
 					</div>
 				</div>

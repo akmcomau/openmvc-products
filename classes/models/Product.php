@@ -4,6 +4,7 @@ namespace modules\products\classes\models;
 
 use core\classes\URL;
 use core\classes\Model;
+use core\classes\Request;
 use modules\checkout\classes\models\ItemInterface;
 use modules\checkout\classes\models\Checkout;
 use modules\checkout\classes\models\CheckoutItem;
@@ -409,5 +410,48 @@ class Product extends Model implements ItemInterface {
 
 	public function isShippable() {
 		return TRUE;
+	}
+
+	public function getViewedIds(Request $request) {
+		$module_config = $this->config->moduleConfig('\modules\products');
+		if (!$module_config->track_viewed_products) return [];
+		$type = $module_config->track_viewed_products;
+
+		$viewed = [];
+		switch($type) {
+			case 'session':
+				$viewed = $request->session->get('track_products_viewed');
+				break;
+		}
+
+		if (!is_array($viewed)) $viewed = [];
+		return $viewed;
+	}
+
+	public function trackViewed(Request $request) {
+		$module_config = $this->config->moduleConfig('\modules\products');
+		if (!$module_config->track_viewed_products) return;
+		$type = $module_config->track_viewed_products;
+
+		// add to the top of the array
+		$viewed = array_merge([$this->id], $this->getViewedIds($request));
+
+		// remove duplicates
+		$max_length = 100;
+		$duplicates = array_keys($viewed, $this->id);
+		array_shift($duplicates);
+		$new_viewed = [];
+		$counter = 0;
+		foreach ($viewed as $index => $id) {
+			if ($counter < 100 && !in_array($index, $duplicates)) {
+				$new_viewed[] = $id;
+			}
+		}
+
+		switch($type) {
+			case 'session':
+				$request->session->set('track_products_viewed', $new_viewed);
+				break;
+		}
 	}
 }

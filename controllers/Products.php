@@ -118,6 +118,37 @@ class Products extends Controller {
 		$this->response->setContent($template->render());
 	}
 
+	public function viewed() {
+		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
+
+		$model = new Model($this->config, $this->database);
+		$product = $model->getModel('\\modules\\products\\classes\\models\\Product');
+
+		$order_by = [];
+		foreach ($product->getViewedIds($this->request) as $id) {
+			$order_by["product_id = $id DESC"] = 'SQL';
+		}
+
+		$pagination = new Pagination($this->request, 'name', 'asc');
+		$products = new ProductGrid($this->config, $this->database, $this->request, $this->language);
+		$params = [
+			'site_id' => $this->config->siteConfig()->site_id,
+			'id' => ['type' => 'in', 'value' => $product->getViewedIds($this->request)],
+			'active' => TRUE
+		];
+		$products->getProducts($params, $order_by, $pagination->getLimitOffset());
+		$pagination->setRecordCount($products->getProductCount($params));
+
+		$data = [
+			'products' => $products,
+			'pagination' => $pagination,
+		];
+
+		$this->layout->setTemplateData(['pagination' => $pagination->getStatus()]);
+		$template = $this->getTemplate('pages/viewed_products.php', $data, 'modules'.DS.'products');
+		$this->response->setContent($template->render());
+	}
+
 	public function view($product_id, $name = NULL) {
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
 
@@ -136,6 +167,8 @@ class Products extends Controller {
 		if (is_null($name)) {
 			throw new RedirectException($this->url->getUrl('Products', 'view', [$product->id, $product->name]));
 		}
+
+		$product->trackViewed($this->request);
 
 		$description = str_replace("\n", '', $product->description);
 		$description = str_replace("\r", '', $description);

@@ -10,6 +10,7 @@ $_LANGUAGE = [
 	'next_image' => 'Next Image',
 	'prev_image' => 'Prev Image',
 	'browse_products' => 'Browse Products',
+	'viewed_products' => 'Viewed Products',
 	'categories' => 'Categories',
 	'sub_categories' => 'Subcategories of: %1$s',
 	'products_in' => 'Products in: %1$s',

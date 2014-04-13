@@ -10,5 +10,6 @@ $_MODULE = [
 		"administrator\\ProductCategoryManager"
 	],
 	"default_config" => [
+		"track_viewed_products" => FALSE,
 	]
 ];
