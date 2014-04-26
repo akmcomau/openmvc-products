@@ -112,6 +112,52 @@ class Product extends Model implements ItemInterface {
 		$this->updateAttributes();
 	}
 
+	public function getSellPrice() {
+		if ($this->config->moduleConfig('\modules\checkout')->show_prices_inc_tax) {
+			return $this->getSellIncTax();
+		}
+		else {
+			return $this->getPrice();
+		}
+	}
+
+	public function getSellTotal() {
+		if ($this->config->moduleConfig('\modules\checkout')->show_prices_inc_tax) {
+			return $this->getTotalIncTax();
+		}
+		else {
+			return $this->getTotal();
+		}
+	}
+
+	public function getSellIncTax() {
+		$checkout_config = $this->config->moduleConfig('\modules\checkout');
+		$tax_type = $checkout_config->tax_type;
+		$tax_class = NULL;
+		if ($tax_type) {
+			$tax_class = $this->config->siteConfig()->checkout->tax_types->$tax_type->class;
+			$tax_class = new $tax_class($this->config, $this->database);
+			return $tax_class->calculateTax($this->sell) + $this->sell;
+		}
+		else {
+			return $this->sell;
+		}
+	}
+
+	public function getTotalIncTax() {
+		$checkout_config = $this->config->moduleConfig('\modules\checkout');
+		$tax_type = $checkout_config->tax_type;
+		$tax_class = NULL;
+		if ($tax_type) {
+			$tax_class = $this->config->siteConfig()->checkout->tax_types->$tax_type->class;
+			$tax_class = new $tax_class($this->config, $this->database);
+			return $tax_class->calculateTax($this->sell) + $this->getTotal();
+		}
+		else {
+			return $this->getTotal();
+		}
+	}
+
 	public function setAttributeValue(ProductAttribute $attribute, $value) {
 		$this->getAttributes();
 		if (isset($this->objects['attributes'][$attribute->id])) {

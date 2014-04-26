@@ -58,7 +58,7 @@
 				</div>
 				<hr class="separator-2column" />
 			<?php } ?>
-			<div class="price"><?php echo  money_format('%n', $product->sell); ?></div>
+			<div class="price"><?php echo  money_format('%n', $product->getSellPrice()); ?></div>
 			<div class="button"><a href="<?php echo $this->url->getUrl('Cart', 'add', ['product', $product->id]); ?>" class="btn btn-primary"><?php echo $text_add_to_cart; ?></a></div>
 		</div>
 	</div>
