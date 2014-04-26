@@ -112,6 +112,39 @@ class Product extends Model implements ItemInterface {
 		$this->updateAttributes();
 	}
 
+	public function setAttributeValue(ProductAttribute $attribute, $value) {
+		$this->getAttributes();
+		if (isset($this->objects['attributes'][$attribute->id])) {
+			$this->objects['attributes'][$attribute->id]->product_attribute_option_id   = $attribute->getValueOption($value);
+			$this->objects['attributes'][$attribute->id]->product_attribute_category_id = $attribute->getValueCategory($value);
+			$this->objects['attributes'][$attribute->id]->product_attribute_value_text  = $attribute->getValueText($value);
+		}
+		else {
+			$attribute_value = $this->getModel('\modules\products\classes\models\ProductAttributeValue');
+			$attribute_value->product_id                    = $this->id;
+			$attribute_value->product_attribute_id          = $attribute->id;
+			$attribute_value->product_attribute_option_id   = $attribute->getValueOption($value);
+			$attribute_value->product_attribute_category_id = $attribute->getValueCategory($value);
+			$attribute_value->product_attribute_value_text  = $attribute->getValueText($value);
+			$this->objects['attributes'][$attribute->id] = $attribute_value;
+		}
+	}
+
+	public function removeAttributeValue(ProductAttribute $attribute) {
+		$this->getAttributes();
+		if (isset($this->objects['attributes'][$attribute->id])) {
+			unset($this->objects['attributes'][$attribute->id]);
+		}
+	}
+
+	public function getAttributeValue(ProductAttribute $attribute) {
+		$attributes = $this->getAttributes();
+		if (isset($attributes[$attribute->id])) {
+			return $attributes[$attribute->id]->getValue();
+		}
+		return NULL;
+	}
+
 	protected function updateAttributes() {
 		if (!isset($this->objects['attributes'])) {
 			return;
@@ -181,14 +214,6 @@ class Product extends Model implements ItemInterface {
 
 		// delete the product
 		parent::delete();
-	}
-
-	public function getAttributeValue($attribute) {
-		$attributes = $this->getAttributes();
-		if (isset($attributes[$attribute->id])) {
-			return $attributes[$attribute->id]->getValue();
-		}
-		return NULL;
 	}
 
 	public function getBrand() {

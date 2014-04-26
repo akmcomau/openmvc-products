@@ -96,6 +96,14 @@ class ProductAttribute extends Model {
 			case 'text':
 				return 'string';
 				break;
+
+			case 'integer':
+				return 'integer';
+				break;
+
+			case 'float':
+				return 'float';
+				break;
 		}
 		throw new ModelException('Cannot get form type of attribute type: '.$this->type);
 	}
@@ -123,8 +131,16 @@ class ProductAttribute extends Model {
 	public function getValueText($value) {
 		$type_array = explode('|', $this->type);
 		switch ($type_array[0]) {
-			case '':
-				return '';
+			case 'text':
+				return $value;
+				break;
+
+			case 'integer':
+				return $value;
+				break;
+
+			case 'float':
+				return $value;
 				break;
 		}
 		return NULL;
@@ -139,6 +155,14 @@ class ProductAttribute extends Model {
 
 			case 'text':
 				return $this->renderText($form, $language, $element_name, $value);
+				break;
+
+			case 'float':
+				return $this->renderFloat($form, $language, $element_name, $value);
+				break;
+
+			case 'integer':
+				return $this->renderInteger($form, $language, $element_name, $value);
 				break;
 		}
 	}
@@ -169,6 +193,32 @@ class ProductAttribute extends Model {
 		];
 
 		$filename = 'elements'.DS.'text.php';
+		$template = new Template($this->config, $language, $filename, $data, 'modules'.DS.'products');
+		return $template->render();
+	}
+
+	protected function renderInteger($form, $language, $element_name, $value) {
+		$data = [
+			'form' => $form,
+			'language' => $language,
+			'element_name' => $element_name,
+			'value' => $value,
+		];
+
+		$filename = 'elements'.DS.'integer.php';
+		$template = new Template($this->config, $language, $filename, $data, 'modules'.DS.'products');
+		return $template->render();
+	}
+
+	protected function renderFloat($form, $language, $element_name, $value) {
+		$data = [
+			'form' => $form,
+			'language' => $language,
+			'element_name' => $element_name,
+			'value' => $value,
+		];
+
+		$filename = 'elements'.DS.'float.php';
 		$template = new Template($this->config, $language, $filename, $data, 'modules'.DS.'products');
 		return $template->render();
 	}

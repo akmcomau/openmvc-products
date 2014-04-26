@@ -196,26 +196,12 @@ class Products extends Controller {
 		$attributes = $product->getAttributes();
 		foreach ($product->getAllAttributes() as $attribute) {
 			if ($form->getValue('attribute_'.$attribute->id)) {
-				if (isset($attributes[$attribute->id])) {
-					$attributes[$attribute->id]->product_attribute_option_id   = $attribute->getValueOption($form->getValue('attribute_'.$attribute->id));
-					$attributes[$attribute->id]->product_attribute_category_id = $attribute->getValueCategory($form->getValue('attribute_'.$attribute->id));
-					$attributes[$attribute->id]->product_attribute_value_text  = $attribute->getValueText($form->getValue('attribute_'.$attribute->id));
-				}
-				else {
-					$attribute_value = $product->getModel('\modules\products\classes\models\ProductAttributeValue');
-					$attribute_value->product_id                    = $product->id;
-					$attribute_value->product_attribute_id          = $attribute->id;
-					$attribute_value->product_attribute_option_id   = $attribute->getValueOption($form->getValue('attribute_'.$attribute->id));
-					$attribute_value->product_attribute_category_id = $attribute->getValueCategory($form->getValue('attribute_'.$attribute->id));
-					$attribute_value->product_attribute_value_text  = $attribute->getValueText($form->getValue('attribute_'.$attribute->id));
-					$attributes[] = $attribute_value;
-				}
+				$product->setAttributeValue($attribute, $form->getValue('attribute_'.$attribute->id));
 			}
-			else if (isset($attributes['attribute_'.$attribute->id])) {
-				unset($attributes['attribute_'.$attribute->id]);
+			elseif (isset($attributes['attribute_'.$attribute->id])) {
+				$product->removeAttributeValue($attribute);
 			}
 		}
-		$product->setObjectCache('attributes', $attributes);
 	}
 
 

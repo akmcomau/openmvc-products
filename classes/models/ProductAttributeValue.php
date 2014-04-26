@@ -73,6 +73,14 @@ class ProductAttributeValue extends Model {
 			case 'text':
 				return $this->product_attribute_value_text;
 				break;
+
+			case 'float':
+				return $this->product_attribute_value_text;
+				break;
+
+			case 'integer':
+				return $this->product_attribute_value_text;
+				break;
 		}
 		throw new ModelException('Cannot get form type of attribute type: '.$this->type);
 	}
