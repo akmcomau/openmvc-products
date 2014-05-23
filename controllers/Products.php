@@ -205,12 +205,15 @@ class Products extends Controller {
 			$values = $form->getSubmittedValues();
 			foreach ($values as $name => $value) {
 				if ($name == 'search_query' && !empty($value)) {
-					$search_for++;
-					$value = strtolower($value);
-					$params['or:1'] = [
-						'name' => ['type'=>'likelower', 'value'=>'%'.$value.'%'],
-						'description' => ['type'=>'likelower', 'value'=>'%'.$value.'%'],
-					];
+					$counter = 0;
+					$words = explode(" ", $value);
+					foreach ($words as $word) {
+						$search_for++;
+						$params['name:'.$counter++] = [
+							 'type'  => 'likelower',
+							 'value' => '%'.$word.'%'
+						];
+					}
 				}
 				elseif (preg_match('/search_(brand|category)/', $name, $matches)) {
 					if ((int)$value) {
