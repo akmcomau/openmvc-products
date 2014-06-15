@@ -176,6 +176,21 @@ class Products extends Controller {
 		$description = preg_replace('/\s+/', ' ', $description);
 		$description = substr($description, 0, 160).'...';
 
+		if ($this->authentication->administratorLoggedIn()) {
+			$this->layout->setTemplateData([
+				'admin_panel_extra' => [
+					'edit_product' => [
+						'text_tag' => 'edit_product',
+						'controller' => 'administrator/Products',
+						'method' => 'editProduct',
+						'params' => [$product->id],
+						'icon' => 'fa fa-pencil-square-o',
+						'after' => 'edit_page',
+					],
+				],
+			]);
+		}
+
 		$this->layout->addMetaTags([
 			'title'       => $product->name.' :: '.$this->config->siteConfig()->name,
 			'description' => $description,

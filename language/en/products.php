@@ -20,6 +20,7 @@ $_LANGUAGE = [
 	'search' => 'Search',
 	'products_search' => 'Products Search',
 	'products_search_results' => 'Search Results',
+	'edit_product' => 'Edit Product',
 
 	'products_browse_in' => 'Products in %1$s',
 
