@@ -199,7 +199,6 @@ class Products extends Controller {
 		if ($this->config->siteConfig()->og_meta_tags) {
 			$meta_tags['og:title'] = $meta_tags['title'];
 			$meta_tags['og:description'] = $meta_tags['description'];
-			$meta_tags['og:keywords'] = $meta_tags['keywords'];
 		}
 
 		// get the products main image
