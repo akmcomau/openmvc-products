@@ -191,11 +191,19 @@ class Products extends Controller {
 			]);
 		}
 
-		$this->layout->addMetaTags([
+		$meta_tags = [
 			'title'       => $product->name.' :: '.$this->config->siteConfig()->name,
 			'description' => $description,
 			'keywords'    => $product->name.','.$product->model.','.$product->getBrandName(),
-		]);
+		];
+
+		// get the products main image
+		$images = $product->getImages();
+		if (count($images)) {
+			$meta_tags['og:image'] = $this->config->getSiteUrl().$images[0]->getUrl();
+		}
+
+		$this->layout->addMetaTags($meta_tags);
 
 		$data = [
 			'product' => $product,
