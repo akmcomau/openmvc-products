@@ -431,7 +431,7 @@ class Product extends Model implements ItemInterface {
 	}
 
 	public function getUrl(URL $url) {
-		return $url->getUrl('Products', 'view', [$this->id, $this->name]);
+		return $url->getUrl('Products', 'view', [$this->id, $url->canonical($this->name)]);
 	}
 
 	public function allowMultiple() {

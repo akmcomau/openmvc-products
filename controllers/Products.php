@@ -164,10 +164,6 @@ class Products extends Controller {
 		}
 		$this->siteProtection($product);
 
-		if (is_null($name)) {
-			throw new RedirectException($this->url->getUrl('Products', 'view', [$product->id, $product->name]));
-		}
-
 		$product->trackViewed($this->request);
 
 		$description = str_replace("\n", '', $product->description);
