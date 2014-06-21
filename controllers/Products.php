@@ -42,7 +42,7 @@ class Products extends Controller {
 		);
 	}
 
-	public function index($type = NULL, $id = NULL) {
+	public function index($type = NULL, $id = NULL, $name = NULL) {
 		$model = new Model($this->config, $this->database);
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
 
@@ -92,6 +92,11 @@ class Products extends Controller {
 				$sub_heading = $this->language->get('products_in', [htmlspecialchars($category->name)]);
 				$group_name = htmlspecialchars($category->name);
 				$main_heading = $this->language->get('sub_categories', [htmlspecialchars($category->name)]);
+
+				// make sure this has the correct title in the params
+				$method_params = $this->request->getMethodParams();
+				$method_params[2] = $this->url->canonical($category->name);
+				$this->request->setMethodParams($method_params);
 
 				$this->layout->addMetaTags([
 					'title'       => $this->language->get('products_browse_in', $category->name).' :: '.$this->config->siteConfig()->name,
@@ -163,6 +168,11 @@ class Products extends Controller {
 			throw new SoftRedirectException($this->url->getControllerClass('Root'), 'error404');
 		}
 		$this->siteProtection($product);
+
+		// make sure this has the correct title in the params
+		$method_params = $this->request->getMethodParams();
+		$method_params[1] = $this->url->canonical($product->name);
+		$this->request->setMethodParams($method_params);
 
 		$product->trackViewed($this->request);
 
