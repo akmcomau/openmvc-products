@@ -76,7 +76,7 @@ class ProductImage extends Model {
 		$language = $site->language;
 		$theme = $site->theme;
 		$path = '/sites/'.$site->namespace.'/themes/product_images/'.$this->product_id.'/';
-		return $path.$this->filename;
+		return $this->config->getSiteUrl(TRUE).$path.$this->filename;
 	}
 
 	public function getThumbnailUrl() {
@@ -84,7 +84,7 @@ class ProductImage extends Model {
 		$language = $site->language;
 		$theme = $site->theme;
 		$path = '/sites/'.$site->namespace.'/themes/product_images/'.$this->product_id.'/';
-		return $path.'tn-'.$this->filename;
+		return $this->config->getSiteUrl(TRUE).$path.'tn-'.$this->filename;
 	}
 
 	public function upload() {

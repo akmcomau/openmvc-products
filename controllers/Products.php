@@ -24,17 +24,17 @@ class Products extends Controller {
 			'active' => TRUE,
 		]);
 		foreach ($products as $product) {
-			$urls[] = ['url' => $this->config->getSiteUrl().$this->url->getUrl($controller, 'view', [$product->id, $product->name])];
+			$urls[] = ['url' => $this->url->getUrl($controller, 'view', [$product->id, $product->name])];
 		}
 
 		$categories = $model->getModel('\modules\products\classes\models\ProductCategory')->getMulti([
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
 		]);
 		foreach ($categories as $category) {
-			$urls[] = ['url' => $this->config->getSiteUrl().$this->url->getUrl($controller, 'index', ['category', $category->id, $category->name])];
+			$urls[] = ['url' => $this->url->getUrl($controller, 'index', ['category', $category->id, $category->name])];
 		}
 
-		$urls[] = ['url' => $this->config->getSiteUrl().$this->url->getUrl($controller, 'index', ['category'])];
+		$urls[] = ['url' => $this->url->getUrl($controller, 'index', ['category'])];
 
 		return array_merge(
 			parent::getAllUrls(NULL, '/view/'),
@@ -210,7 +210,7 @@ class Products extends Controller {
 		// get the products main image
 		$images = $product->getImages();
 		if (count($images)) {
-			$meta_tags['og:image'] = $this->config->getSiteUrl().$images[0]->getUrl();
+			$meta_tags['og:image'] = $images[0]->getUrl();
 		}
 
 		$this->layout->addMetaTags($meta_tags);
