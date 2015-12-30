@@ -119,7 +119,7 @@ class Product extends Model implements ItemInterface {
 			$value = $this->getSellIncTax();
 		}
 		else {
-			$value = $this->getSellPrice();
+			$value = $this->sell;
 		}
 
 		return $this->callPriceHook('getSellPrice', $value);
