@@ -97,6 +97,10 @@ class ProductAttribute extends Model {
 				return 'string';
 				break;
 
+			case 'checkbox':
+				return 'string';
+				break;
+
 			case 'integer':
 				return 'integer';
 				break;
@@ -135,6 +139,10 @@ class ProductAttribute extends Model {
 				return $value;
 				break;
 
+			case 'checkbox':
+				return $value;
+				break;
+
 			case 'integer':
 				return $value;
 				break;
@@ -155,6 +163,10 @@ class ProductAttribute extends Model {
 
 			case 'text':
 				return $this->renderText($form, $language, $element_name, $value);
+				break;
+
+			case 'checkbox':
+				return $this->renderCheckbox($form, $language, $element_name, $value);
 				break;
 
 			case 'float':
@@ -193,6 +205,19 @@ class ProductAttribute extends Model {
 		];
 
 		$filename = 'elements'.DS.'text.php';
+		$template = new Template($this->config, $language, $filename, $data, 'modules'.DS.'products');
+		return $template->render();
+	}
+
+	protected function renderCheckbox($form, $language, $element_name, $value) {
+		$data = [
+			'form' => $form,
+			'language' => $language,
+			'element_name' => $element_name,
+			'value' => $value,
+		];
+
+		$filename = 'elements'.DS.'checkbox.php';
 		$template = new Template($this->config, $language, $filename, $data, 'modules'.DS.'products');
 		return $template->render();
 	}

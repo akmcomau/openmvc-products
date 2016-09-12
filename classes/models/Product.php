@@ -203,11 +203,27 @@ class Product extends Model implements ItemInterface {
 		}
 	}
 
-	public function getAttributeValue(ProductAttribute $attribute) {
+	public function getAttributeValue($attribute) {
 		$attributes = $this->getAttributes();
-		if (isset($attributes[$attribute->id])) {
-			return $attributes[$attribute->id]->getValue();
+
+		if (is_a($attribute, '\modules\products\classes\models\ProductAttribute')) {
+			if (isset($attributes[$attribute->id])) {
+				return $attributes[$attribute->id]->getValue();
+			}
 		}
+		elseif (is_int($attribute)) {
+			if (isset($attributes[$attribute])) {
+				return $attributes[$attribute]->getValue();
+			}
+		}
+		else {
+			foreach ($attributes as $attr) {
+				if ($attr->getProductAttribute()->name == $attribute) {
+					return $attr->getValue();
+				}
+			}
+		}
+
 		return NULL;
 	}
 

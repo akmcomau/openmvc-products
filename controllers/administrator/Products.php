@@ -198,6 +198,9 @@ class Products extends Controller {
 			if ($form->getValue('attribute_'.$attribute->id)) {
 				$product->setAttributeValue($attribute, $form->getValue('attribute_'.$attribute->id));
 			}
+			elseif ($attribute->type == 'checkbox' && $form->getValue('attribute_'.$attribute->id) === NULL) {
+				$product->setAttributeValue($attribute, 0);
+			}
 			elseif (isset($attributes['attribute_'.$attribute->id])) {
 				$product->removeAttributeValue($attribute);
 			}

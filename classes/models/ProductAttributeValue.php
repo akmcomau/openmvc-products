@@ -74,6 +74,10 @@ class ProductAttributeValue extends Model {
 				return $this->product_attribute_value_text;
 				break;
 
+			case 'checkbox':
+				return $this->product_attribute_value_text;
+				break;
+
 			case 'float':
 				return $this->product_attribute_value_text;
 				break;
