@@ -314,7 +314,7 @@ class Products extends Controller {
 			'sku' => [
 				'type' => 'string',
 				'max_length' => 64,
-				'required' => TRUE,
+				'required' => FALSE,
 				'message' => $this->language->get('error_product_sku'),
 			],
 			'model' => [
