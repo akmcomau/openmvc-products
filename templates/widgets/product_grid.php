@@ -8,7 +8,7 @@
 					$image  = NULL;
 					if (count($images)) {
 						$image = $images[0];
-						?><img src="<?php echo $image->getThumbnailUrl(); ?>" /><?php
+						?><img class="img-responsive" src="<?php echo $image->getThumbnailUrl(); ?>" /><?php
 					}
 				?>
 			</a>
