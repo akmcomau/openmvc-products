@@ -423,6 +423,8 @@ class Product extends Model implements ItemInterface {
 				product_attribute
 			WHERE
 				product_attribute.site_id = ".(int)$this->config->siteConfig()->site_id."
+			ORDER BY
+				product_attribute_ordering
 		";
 		$records = $this->database->queryMulti($sql);
 
@@ -450,6 +452,8 @@ class Product extends Model implements ItemInterface {
 			WHERE
 				product_id = ".(int)$this->id."
 				AND product_attribute.site_id = ".(int)$this->config->siteConfig()->site_id."
+			ORDER BY
+				product_attribute_ordering
 		";
 		$records = $this->database->queryMulti($sql);
 
