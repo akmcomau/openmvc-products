@@ -357,6 +357,7 @@ class Products extends Controller {
 			'sell' => [
 				'type' => 'money',
 				'required' => TRUE,
+				'zero_allowed' => TRUE,
 				'message' => $this->language->get('error_product_sell'),
 			],
 		];
