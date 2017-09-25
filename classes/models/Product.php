@@ -84,8 +84,8 @@ class Product extends Model implements ItemInterface {
 		'product_model',
 	];
 
-	protected $uniques = [
-		'product_sku',
+	protected $partial_uniques = [
+		["product_sku != ''", 'product_sku'],
 	];
 
 	protected $foreign_keys = [

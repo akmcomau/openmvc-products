@@ -371,6 +371,9 @@ class Products extends Controller {
 						if (!$is_add_page && $product->sku == $value) {
 							return TRUE;
 						}
+						if ($value == '') {
+							return TRUE;
+						}
 						$product = $model->getModel('\modules\products\classes\models\Product');
 						$product = $product->get(['sku' => $value]);
 						return $product ? FALSE : TRUE;
