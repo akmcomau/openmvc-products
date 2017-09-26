@@ -494,6 +494,10 @@ class Product extends Model implements ItemInterface {
 		return $this->sku;
 	}
 
+	public function getModelNo() {
+		return $this->model;
+	}
+
 	public function setQuantity($quantity) {
 		$this->quantity = (int)$quantity;
 		$this->total    = $this->sell * $this->quantity;
