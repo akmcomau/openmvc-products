@@ -161,7 +161,6 @@ class Products extends Controller {
 		$product = $model->getModel('\modules\products\classes\models\Product')->get([
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
 			'id' => $product_id,
-			'sell' => ['type'=>'>', 'value'=>0],
 			'active' => TRUE,
 		]);
 		if (!$product) {
