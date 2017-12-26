@@ -46,6 +46,8 @@ class Products extends Controller {
 		$model = new Model($this->config, $this->database);
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
 
+		$form = $this->getProductSearchForm();
+
 		$field = NULL;
 		$class = NULL;
 		switch ($type) {
@@ -58,12 +60,16 @@ class Products extends Controller {
 				break;
 		}
 
+		$category_grid = $this->getCategoryGrid('\modules\products\classes\models\ProductCategory');
+
+		$module_config = $this->config->moduleConfig('\modules\products');
 		$categories = new CategoryGrid($this->config, $this->database, $this->request, $this->language);
-		$categories->getCategories($class, [
-			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
-			'active' => TRUE,
-			'sell' => ['type'=>'>', 'value'=>0],
-			'parent_id' => (int)$id ? (int)$id : NULL,
+		$categories->getCategories($class,
+			[
+				'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
+				'active' => TRUE,
+				'sell' => ['type'=>'>', 'value'=>0],
+				'parent_id' => (int)$id ? (int)$id : NULL,
 			],
 			['name' => 'asc']
 		);
@@ -74,7 +80,7 @@ class Products extends Controller {
 			'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
 			'active' => TRUE
 		];
-		if ($field) {
+		if ($field && $id) {
 			$params[$field] = $id;
 		}
 		$products->getProducts($params, $pagination->getOrdering(), $pagination->getLimitOffset());
@@ -111,11 +117,13 @@ class Products extends Controller {
 
 		$data = [
 			'categories' => $categories,
+			'category_grid' => $category_grid,
 			'products' => $products,
 			'pagination' => $pagination,
 			'sub_heading' => $sub_heading,
 			'main_heading' => $main_heading,
 			'group_name' => $group_name,
+			'form' => $form,
 		];
 
 		$this->layout->setTemplateData(['pagination' => $pagination->getStatus()]);
@@ -125,6 +133,9 @@ class Products extends Controller {
 
 	public function viewed() {
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
+		$form = $this->getProductSearchForm();
+
+		$categories = $this->getCategoryGrid('\modules\products\classes\models\ProductCategory');
 
 		$model = new Model($this->config, $this->database);
 		$product = $model->getModel('\\modules\\products\\classes\\models\\Product');
@@ -145,8 +156,10 @@ class Products extends Controller {
 		$pagination->setRecordCount($products->getProductCount($params));
 
 		$data = [
+			'categories' => $categories,
 			'products' => $products,
 			'pagination' => $pagination,
+			'form' => $form,
 		];
 
 		$this->layout->setTemplateData(['pagination' => $pagination->getStatus()]);
@@ -156,6 +169,9 @@ class Products extends Controller {
 
 	public function view($product_id, $name = NULL) {
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
+		$form = $this->getProductSearchForm();
+
+		$categories = $this->getCategoryGrid('\modules\products\classes\models\ProductCategory');
 
 		$model = new Model($this->config, $this->database);
 		$product = $model->getModel('\modules\products\classes\models\Product')->get([
@@ -215,7 +231,9 @@ class Products extends Controller {
 		$this->layout->addMetaTags($meta_tags);
 
 		$data = [
+			'categories' => $categories,
 			'product' => $product,
+			'form' => $form,
 		];
 
 		$template = $this->getTemplate('pages/view_product.php', $data, 'modules'.DS.'products');
@@ -226,6 +244,8 @@ class Products extends Controller {
 		$this->language->loadLanguageFile('products.php', 'modules'.DS.'products');
 		$form = $this->getProductSearchForm();
 		$model = new Model($this->config, $this->database);
+
+		$category_grid = $this->getCategoryGrid('\modules\products\classes\models\ProductCategory');
 
 		$search_in = $search_for = 0;
 		$params = [
@@ -295,6 +315,7 @@ class Products extends Controller {
 		]);
 
 		$data = [
+			'category_grid' => $category_grid,
 			'form' => $form,
 			'brands' => $brands,
 			'pagination' => $pagination,
@@ -332,4 +353,18 @@ class Products extends Controller {
 		return new FormValidator($this->request, 'form-products-search', $inputs);
 	}
 
+	protected function getCategoryGrid($class) {
+		$module_config = $this->config->moduleConfig('\modules\products');
+		$categories = new CategoryGrid($this->config, $this->database, $this->request, $this->language);
+		$categories->getCategories($class,
+			[
+				'site_id' => ['type'=>'in', 'value'=>$this->allowedSiteIDs()],
+				'active' => TRUE,
+				'sell' => ['type'=>'>', 'value'=>0],
+			],
+			['name' => 'asc']
+		);
+
+		return $categories;
+	}
 }
