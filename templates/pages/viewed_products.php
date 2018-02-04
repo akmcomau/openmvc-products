@@ -1,4 +1,4 @@
-<div class="<?php echo $page_div_class; ?>">
+<div class="<?php echo $page_class; ?>">
 	<h1><?php echo $text_viewed_products; ?></h1>
 	<?php if ($products->getProductCount()) { ?>
 		<?php if ($pagination->getMaxPage() > 1) { ?>

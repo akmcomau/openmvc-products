@@ -1,4 +1,4 @@
-<div class="<?php echo $page_div_class; ?>">
+<div class="<?php echo $page_class; ?>">
 	 <h1><?php echo $text_browse_products; ?></h1>
 	<?php if ($categories->getCategoryCount()) {
 		?><h2><?php echo $main_heading; ?></h2><?php
